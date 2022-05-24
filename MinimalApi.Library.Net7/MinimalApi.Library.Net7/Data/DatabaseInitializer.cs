@@ -15,7 +15,7 @@ namespace MinimalApi.Library.Net7.Data
         {
             using var connection = await dbConnectionFactory.CreateConnectionAsync();
             await connection.ExecuteAsync(
-                @"CREATE TABLE IF NOT EXISTS Books (
+                @"CREATE TABLE IF NOT EXISTS Book (
                 Isbn TEXT PRIMARY KEY,
                 Title TEXT NOT NULL,
                 Author TEXT NOT NULL,

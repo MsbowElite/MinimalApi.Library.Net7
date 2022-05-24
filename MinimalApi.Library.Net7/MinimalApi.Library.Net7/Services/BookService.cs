@@ -1,37 +1,77 @@
-﻿using MinimalApi.Library.Net7.Models;
+﻿using Dapper;
+using MinimalApi.Library.Net7.Data;
+using MinimalApi.Library.Net7.Models;
 
 namespace MinimalApi.Library.Net7.Services
 {
     public class BookService : IBookService
     {
-        public Task<bool> CreateAsync(Book book)
+        private readonly IDbConnectionFactory dbConnectionFactory;
+
+        public BookService(IDbConnectionFactory dbConnectionFactory)
         {
-            throw new NotImplementedException();
+            this.dbConnectionFactory = dbConnectionFactory;
         }
 
-        public Task<bool> DeleteAsync(string isbn)
+        public async Task<bool> CreateAsync(Book book)
         {
-            throw new NotImplementedException();
+            var existingBook = await GetByIsbnAsync(book.Isbn);
+            if (existingBook is not null)
+            {
+                return false;
+            }
+
+            using var connection = await dbConnectionFactory.CreateConnectionAsync();
+            var result = await connection.ExecuteAsync(
+                @"INSERT INTO Books (Isbn, Title, Author, ShortDescription, PageCount, ReleaseDate) 
+                VALUES (@Isbn, @Title, @Author, @ShortDescription, @PageCount, @ReleaseDate)",
+                book);
+            return result > 0;
         }
 
-        public Task<IEnumerable<Book>> GetAllAsync()
+        public async Task<Book?> GetByIsbnAsync(string isbn)
         {
-            throw new NotImplementedException();
+            using var connection = await dbConnectionFactory.CreateConnectionAsync();
+            return connection.QuerySingleOrDefault<Book>(
+                "SELECT * FROM Books WHERE Isbn = @Isbn LIMIT 1", new { Isbn = isbn });
         }
 
-        public Task<Book?> GetByIsbnAsync(string isbn)
+        public async Task<IEnumerable<Book>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            using var connection = await dbConnectionFactory.CreateConnectionAsync();
+            return await connection.QueryAsync<Book>("SELECT * FROM Books");
         }
 
-        public Task<IEnumerable<Book>> SearchByTitleAsync(string searchTerm)
+        public async Task<IEnumerable<Book>> SearchByTitleAsync(string searchTerm)
         {
-            throw new NotImplementedException();
+            using var connection = await dbConnectionFactory.CreateConnectionAsync();
+            return await connection.QueryAsync<Book>(
+                "SELECT * FROM Books WHERE Title LIKE '%' || @SearchTerm || '%'",
+                new { SearchTerm = searchTerm });
         }
 
-        public Task<bool> UpdateAsync(Book book)
+        public async Task<bool> UpdateAsync(Book book)
         {
-            throw new NotImplementedException();
+            var existingBook = await GetByIsbnAsync(book.Isbn);
+            if (existingBook is null)
+            {
+                return false;
+            }
+
+            using var connection = await dbConnectionFactory.CreateConnectionAsync();
+            var result = await connection.ExecuteAsync(
+                @"UPDATE Books SET Title = @Title, Author = @Author, ShortDescription = @ShortDescription,
+                    PageCount = @PageCount, ReleaseDate = @ReleaseDate WHERE Isbn = @Isbn",
+                book);
+            return result > 0;
+        }
+
+        public async Task<bool> DeleteAsync(string isbn)
+        {
+            using var connection = await dbConnectionFactory.CreateConnectionAsync();
+            var result = await connection.ExecuteAsync(
+                @"DELETE FROM Books WHERE Isbn = @Isbn", new { Isbn = isbn });
+            return result > 0;
         }
     }
 }
