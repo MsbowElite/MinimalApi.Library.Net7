@@ -11,6 +11,7 @@ namespace MinimalApi.Library.Net7.Endpoints
         private const string ContentType = "application/json";
         private const string Tag = "Books";
         private const string BaseRoute = "books";
+        private const string Slash = "/";
 
         public static void AddServices(IServiceCollection services, IConfiguration configuration)
         {
@@ -19,32 +20,30 @@ namespace MinimalApi.Library.Net7.Endpoints
 
         public static void DefineEndpoints(IEndpointRouteBuilder app)
         {
-            app.MapPost(BaseRoute, CreateBookAsync)
+            var books = app.MapGroup(BaseRoute)
+                .WithTags(Tag);
+
+            books.MapPost(Slash, CreateBookAsync)
                 .WithName("CreateBook")
                 .Accepts<Book>(ContentType)
-                .Produces<Book>(201).Produces<IEnumerable<ValidationFailure>>(400)
-                .WithTags(Tag);
+                .Produces<Book>(201).Produces<IEnumerable<ValidationFailure>>(400);
 
-            app.MapGet(BaseRoute, GetAllBooksAsync)
+            books.MapGet(Slash, GetAllBooksAsync)
                 .WithName("GetBooks")
-                .Produces<IEnumerable<Book>>(200)
-                .WithTags(Tag);
+                .Produces<IEnumerable<Book>>(200);
 
-            app.MapGet($"{BaseRoute}/{{isbn}}", GetBookByIsbnAsync)
+            books.MapGet($"{Slash}{{isbn}}", GetBookByIsbnAsync)
                 .WithName("GetBook")
-                .Produces<Book>(200).Produces(404)
-                .WithTags(Tag);
+                .Produces<Book>(200).Produces(404);
 
-            app.MapPut($"{BaseRoute}/{{isbn}}", UpdateBookAsync)
+            books.MapPut($"{Slash}{{isbn}}", UpdateBookAsync)
                 .WithName("UpdateBook")
                 .Accepts<Book>(ContentType)
-                .Produces<Book>(200).Produces<IEnumerable<ValidationFailure>>(400)
-                .WithTags(Tag);
+                .Produces<Book>(200).Produces<IEnumerable<ValidationFailure>>(400);
 
-            app.MapDelete($"{BaseRoute}/{{isbn}}", DeleteBookAsync)
+            books.MapDelete($"{Slash}{{isbn}}", DeleteBookAsync)
                 .WithName("DeleteBook")
-                .Produces(204).Produces(404)
-                .WithTags(Tag);
+                .Produces(204).Produces(404);
         }
 
         internal static async Task<IResult> CreateBookAsync(
