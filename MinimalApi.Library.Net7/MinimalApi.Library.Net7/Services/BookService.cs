@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using MinimalApi.Library.Net7.Data;
+using MinimalApi.Library.Net7.Filters;
 using MinimalApi.Library.Net7.Models;
 
 namespace MinimalApi.Library.Net7.Services
@@ -42,12 +43,13 @@ namespace MinimalApi.Library.Net7.Services
             return await connection.QueryAsync<Book>("SELECT * FROM Books");
         }
 
-        public async Task<IEnumerable<Book>> SearchByTitleAsync(string searchTerm)
+        public async Task<IEnumerable<Book>> SearchByTitleAsync(BookFilter filter)
         {
             using var connection = await dbConnectionFactory.CreateConnectionAsync();
             return await connection.QueryAsync<Book>(
-                "SELECT * FROM Books WHERE Title LIKE '%' || @SearchTerm || '%'",
-                new { SearchTerm = searchTerm });
+                "SELECT * FROM Books WHERE Title LIKE '%' || @SearchTerm || '%'" +
+                " LIMIT @Limit OFFSET @Offset",
+                new { filter.SearchTerm, filter.Limit, filter.Offset });
         }
 
         public async Task<bool> UpdateAsync(Book book)

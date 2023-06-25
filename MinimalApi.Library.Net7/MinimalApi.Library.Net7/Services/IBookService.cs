@@ -1,4 +1,5 @@
-﻿using MinimalApi.Library.Net7.Models;
+﻿using MinimalApi.Library.Net7.Filters;
+using MinimalApi.Library.Net7.Models;
 
 namespace MinimalApi.Library.Net7.Services
 {
@@ -10,7 +11,7 @@ namespace MinimalApi.Library.Net7.Services
 
         public Task<IEnumerable<Book>> GetAllAsync();
 
-        public Task<IEnumerable<Book>> SearchByTitleAsync(string searchTerm);
+        public Task<IEnumerable<Book>> SearchByTitleAsync(BookFilter filter);
 
         public Task<bool> UpdateAsync(Book book);
 

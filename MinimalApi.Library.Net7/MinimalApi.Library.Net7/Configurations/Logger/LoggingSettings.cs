@@ -11,7 +11,7 @@ namespace MinimalApi.Library.Net7.Configurations.Logger
         public string Region { get; set; } = default!;
         public string Retention { get; set; } = default!;
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-        public LogGroupRetentionPolicy LogGroupRetentionPolicy => 
+        public LogGroupRetentionPolicy LogGroupRetentionPolicy =>
             Enum.TryParse(typeof(LogGroupRetentionPolicy), Retention, out object retentionTypeObject)
                     ? (LogGroupRetentionPolicy)retentionTypeObject
                     : LogGroupRetentionPolicy.Indefinitely;

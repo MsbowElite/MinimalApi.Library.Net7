@@ -11,7 +11,7 @@ namespace MinimalApi.Library.Net7.Configurations.Logger
             var propertyLevel = propertyFactory.CreateProperty("level", logEvent.Level);
             logEvent.AddOrUpdateProperty(propertyLevel);
 
-            if(logEvent.Exception != null)
+            if (logEvent.Exception != null)
             {
                 var propertyException = propertyFactory.CreateProperty("exception", GetException(logEvent.Exception));
                 logEvent.AddOrUpdateProperty(propertyException);
@@ -24,7 +24,7 @@ namespace MinimalApi.Library.Net7.Configurations.Logger
             StringBuilder stringBuilder = new();
             stringBuilder.Append($"exception: {exception}");
 
-            if(exception.InnerException != null)
+            if (exception.InnerException != null)
             {
                 stringBuilder.AppendLine($"exceptionDetails: {GetException(exception.InnerException)}");
             }

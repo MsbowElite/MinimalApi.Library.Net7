@@ -1,12 +1,7 @@
 ﻿using FluentAssertions;
 using MinimalApi.Library.Net7.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http.Json;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace MinimalApi.Library.Net7.Tests.Integration

@@ -1,6 +1,5 @@
 ﻿using MinimalApi.Library.Net7.CrossCutting.Utils.Helpers;
 using MinimalApi.Library.Net7.CrossCutting.Utils.Notification.Enums;
-using System.ComponentModel;
 using System.Text.Json.Serialization;
 
 namespace MinimalApi.Library.Net7.CrossCutting.Utils.Notification

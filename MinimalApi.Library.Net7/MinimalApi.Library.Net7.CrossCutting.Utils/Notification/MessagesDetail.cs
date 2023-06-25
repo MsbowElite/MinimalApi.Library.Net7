@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace MinimalApi.Library.Net7.CrossCutting.Utils.Notification
 {

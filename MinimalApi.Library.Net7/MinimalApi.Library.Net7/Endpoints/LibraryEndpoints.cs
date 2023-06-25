@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 using MinimalApi.Library.Net7.Endpoints.Internal;
+using MinimalApi.Library.Net7.Filters;
 using MinimalApi.Library.Net7.Models;
 using MinimalApi.Library.Net7.Services;
 
@@ -69,13 +70,12 @@ namespace MinimalApi.Library.Net7.Endpoints
         }
 
         internal static async Task<IResult> GetAllBooksAsync(
-        IBookService bookService, string? searchTerm)
+        IBookService bookService, string? searchTerm, short? limit, short? offset)
         {
-            if (searchTerm is not null && !string.IsNullOrWhiteSpace(searchTerm))
-            {
-                var matchedBooks = await bookService.SearchByTitleAsync(searchTerm);
-                return Results.Ok(matchedBooks);
-            }
+            BookFilter filter = new(searchTerm, limit, offset);
+
+            var matchedBooks = await bookService.SearchByTitleAsync(filter);
+            return Results.Ok(matchedBooks);
 
             var books = await bookService.GetAllAsync();
             return Results.Ok(books);
